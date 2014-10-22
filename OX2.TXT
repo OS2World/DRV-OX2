@@ -1,0 +1,76 @@
+			      README.DOC
+				 for
+				 OX2
+
+Description
+-----------
+OX2 is an OS/2 device driver which directs output to the AUX
+device to the monochrome monitor in a two-monitor system.  
+
+You must have the following hardware to use this driver:
+
+	- An AT-bus machine that runs OS/2
+	- A CGA, EGA, or VGA,    *and*
+	- An MDA, Hercules mono or clone adapter.
+
+Unlike the standard AUX device in DOS, OX2 does not take input from
+anywhere, just because it would be really hard to do.  Therefore,
+attempting to read from the AUX device causes an error.
+
+The main use of this driver is to direct messages to the
+secondary monitor from a program which otherwise doesn't have a
+console-like device at its disposal.
+
+Usage
+-----
+You install the driver by adding a line to your CONFIG.SYS file:
+
+	DEVICE=d:\path\OX2.SYS
+
+Some uses of OX2:
+
+- Your PM programs can use file I/O to the AUX device for debugging
+  messages on the second monitor:
+
+  	aux = fopen("AUX", "w");
+	fprintf(aux, "got this far...\n");
+
+- You can redirect the output from MAKE to AUX to watch its progress
+  from any session, including the DOS mode session:
+
+  	make > AUX
+
+- You can place directories and other listings on the second monitor
+  for reference while you're working on the main monitor:
+
+  	dir /w > AUX
+	type foo.txt > AUX
+
+Notes and Restrictions
+----------------------
+This is not the most robust driver you'll ever come across.  For
+starters, at present OS/2 crashes if a DOS mode program attempts to
+write to it.  Although an OS/2 program can write to it while the DOS
+box is in the foreground, the DOS box should not use it.  It is
+probably trivial to fix this problem, involving a semaphore here and
+there.  If I can figure it out I will post an update.
+
+This driver does all that's asked of it at task time, which is 
+generally a no-no under multitasking OS's.  I did it this way because
+the writes usually don't take very long, and I wanted to keep it
+simple.
+
+OS/2 doesn't appear to have an AUX device like DOS does, so this
+driver should not be supplanting any existing AUX.
+
+Acknowledgements
+----------------
+The idea for this driver, and in fact a chunk of its code, comes
+directly from the DOS device driver OX.SYS, written by the inimitable
+Mike Geary.
+
+Like Geary's offering, this driver and source is also in the public
+domain.  If you have any ideas on how to improve it, please let me
+know or feel free to make your own modifications.
+
+Me:         JWC
